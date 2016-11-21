@@ -135,6 +135,7 @@ module RxNav
 
       def flatten_ndc_properties data
         data=data[:ndc_property_list][:ndc_property]
+        data=RxNav.ensure_array(data)[0]       
         if data[:property_concept_list]
           data[:property_concept_list][:property_concept].each do |prop| 
             data[prop[:prop_name].downcase.to_sym]=prop[:prop_value]

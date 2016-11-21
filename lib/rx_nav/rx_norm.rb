@@ -1,13 +1,33 @@
+
 module RxNav
   class RxNorm
     class << self
+
+
+      def get_NDC_properties ndc
+        binding.pry
+        ndc=ndc.to_s
+        query="/ndcproperties?id=#{ndc}"
+        data=get_response_hash(query)
+        data ? flatten_ndc_properties(data) : data
+      end
+
+      def get_concept_ndcs rxcui
+        rxcui=rxcui.to_s
+        query="/rxcui/#{rxcui}/ndcs"
+        ndc_list=get_response_hash(query)[:ndc_group][:ndc_list]
+        ndc_list ? ndc_list[:ndc] : nil
+
+      end
+
+
 
       def search_by_name name, options = {}
         options = {max_results: 20, options: 0}.merge(options)
 
         query = "/approximateTerm?term=#{name}"\
-                "&maxEntries=#{options[:max_results]}"\
-                "&options=#{options[:options]}"
+        "&maxEntries=#{options[:max_results]}"\
+        "&options=#{options[:options]}"
 
         # Get the data we care about in the right form
         data = get_response_hash(query)[:approximate_group][:candidate]
@@ -20,6 +40,8 @@ module RxNav
 
         return data.map { |c| RxNav::Concept.new(c) }
       end
+
+      
 
       def find_rxcui_by_id type, id
         type  = type.upcase
@@ -112,6 +134,18 @@ module RxNav
 
       private
 
+      def flatten_ndc_properties data
+        data=data[:ndc_property_list][:ndc_property]
+        if data[:property_concept_list]
+          data[:property_concept_list][:property_concept].each do |prop| 
+            data[prop[:prop_name].downcase.to_sym]=prop[:prop_value]
+          end
+        end
+        data.delete(:property_concept_list)
+        return OpenStruct.new(data)
+      end
+
+
       def get_response_hash query
         RxNav.make_request(query)[:rxnormdata]
       end
@@ -128,6 +162,5 @@ module RxNav
     end
 
     self.singleton_class.send(:alias_method, :find_by_name, :search_by_name)
-
   end
 end

@@ -5,7 +5,6 @@ module RxNav
 
 
       def get_NDC_properties ndc
-        binding.pry
         ndc=ndc.to_s
         query="/ndcproperties?id=#{ndc}"
         data=get_response_hash(query)

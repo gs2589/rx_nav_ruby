@@ -11,6 +11,7 @@ require 'rx_nav/interaction'
 require 'rx_nav/ndfrt'
 require 'rx_nav/rx_norm'
 require 'rx_nav/rx_terms'
+require 'rxnav/rx_prescribable'
 
 module RxNav
 

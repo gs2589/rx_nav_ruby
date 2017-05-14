@@ -23,7 +23,7 @@ module RxNav
       private
 
       def get_response_hash query
-        RxNav.make_request('/Prescribe' + query)[:rxtermsdata]
+        RxNav.make_request('/Prescribe' + query)[:rxnormdata]
       end
     end
     
